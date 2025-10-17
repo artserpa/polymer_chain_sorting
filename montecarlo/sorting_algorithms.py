@@ -149,3 +149,38 @@ def selection_sort_numba(arr):
                 min_idx = j
         sorted_arr[i], sorted_arr[min_idx] = sorted_arr[min_idx], sorted_arr[i]
     return sorted_arr
+
+# -------------------- TimSort  ------------------
+def tim_sort(arr):
+    '''
+    Tim Sort (pure Python)
+    
+    Parameters
+    ----------
+    arr : np.ndarray
+        Array to sort.
+    
+    Returns
+    -------
+    np.ndarray
+        Sorted array.
+    '''
+    sorted_arr = arr.copy()
+    return np.sort(sorted_arr, kind='stable')
+
+@njit
+def tim_sort_numba(arr):
+    '''
+    Tim Sort (Numba)
+    Numba doesn't actually accelerates np.sort, but it is possible to use np.sort inside njit
+    Parameters
+    ----------
+    arr : np.ndarray
+        Array to sort.
+    
+    Returns
+    -------
+    np.ndarray
+        Sorted array.
+    '''
+    return np.sort(arr.copy(), kind='stable')
