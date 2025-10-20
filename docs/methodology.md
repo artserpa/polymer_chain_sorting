@@ -1,4 +1,3 @@
-```markdown
 # Methodology
 
 This project implements a Monte Carlo simulation to model polymer chain formation with three monomer types: A, B, and C. The methodology consists of the following steps:
