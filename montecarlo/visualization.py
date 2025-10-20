@@ -23,7 +23,7 @@ def plot_w_distribution(freq_X, chain_lengths, smooth_window=51, poly_order=3, l
     color : str
         Color for points and line.
     """
-    n_bins = np.ceil(chain_lengths / 10)
+    n_bins = int(np.ceil(len(chain_lengths) / 10))
     # Compute the w distribution
     bins = np.linspace(0, 1, n_bins + 1)
     bin_centers = (bins[:-1] + bins[1:]) / 2
