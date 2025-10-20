@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from scipy.signal import savgol_filter
 
 def plot_w_distribution(freq_X, chain_lengths, smooth_window=51, poly_order=3, label=None, color=None):
@@ -50,3 +51,37 @@ def plot_w_distribution(freq_X, chain_lengths, smooth_window=51, poly_order=3, l
     plt.xlabel("Monomer fraction")
     plt.ylabel("wX (normalized)")
     plt.legend()
+
+def save_w_distribution_csv(monomer_fractions, chain_lengths, filename="w_distribution.csv", n_bins=None):
+    """
+    Save the W distribution data for a monomer fraction to a CSV file.
+
+    Parameters
+    ----------
+    monomer_fractions : np.ndarray
+        Fraction of a given monomer (Fa, Fb, Fc).
+    chain_lengths : np.ndarray
+        Lengths of polymer chains.
+    filename : str
+        Output CSV file path.
+    n_bins : int, optional
+        Number of bins. Default: ceil(len(chain_lengths) / 10)
+    """
+    if n_bins is None:
+        n_bins = int(np.ceil(len(chain_lengths) / 10))
+    
+    # Create bins and W values
+    bins = np.linspace(np.min(monomer_fractions), np.max(monomer_fractions), n_bins+1)
+    W_values, _ = np.histogram(monomer_fractions, bins=bins, weights=chain_lengths, density=False)
+    
+    # Normalize so the area under the curve is 1
+    W_values = W_values / W_values.sum()
+    
+    bin_centers = (bins[:-1] + bins[1:]) / 2
+    
+    df = pd.DataFrame({
+        "bin_center": bin_centers,
+        "W": W_values
+    })
+    
+    df.to_csv(filename, index=False)

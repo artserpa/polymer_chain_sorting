@@ -1,5 +1,5 @@
 from montecarlo.analysis import run_scaling_benchmark, plot_benchmark_results, save_results_to_csv
-from montecarlo.visualization import plot_w_distribution
+from montecarlo.visualization import plot_w_distribution, save_w_distribution_csv
 from montecarlo.simulation import generate_chains
 import matplotlib.pyplot as plt
 
@@ -18,6 +18,11 @@ if __name__ == "__main__":
     
     # 4️⃣ Gerar cadeias para distribuição
     chain_lengths, freq_A, freq_B, freq_C = generate_chains(10000, use_numba=True)
+
+    save_w_distribution_csv(freq_A, chain_lengths, filename="results/distribution_WA.csv")
+    save_w_distribution_csv(freq_B, chain_lengths, filename="results/distribution_WB.csv")
+    save_w_distribution_csv(freq_C, chain_lengths, filename="results/distribution_WC.csv")
+
     
     # 5️⃣ Plotar distribuições W
     plt.figure(figsize=(12, 6))
