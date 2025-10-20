@@ -1,18 +1,28 @@
 import numpy as np
-from montecarlo.analysis import run_scaling_benchmark
+import pandas as pd
+from montecarlo.analysis import run_scaling_benchmark, save_results_to_csv
 
 def test_run_scaling_benchmark():
     n_chains_list = [10, 20]
-    results = run_scaling_benchmark(n_chains_list, random_seed=123)
+    df = run_scaling_benchmark(n_chains_list, n_repeats=2, random_seed=123)
 
-    assert 'bubble_python' in results
-    assert 'bubble_numba' in results
-    assert 'insertion_python' in results
-    assert 'insertion_numba' in results
-    assert 'selection_python' in results
-    assert 'selection_numba' in results
-    assert 'timsort_python' in results
+    assert isinstance(df, pd.DataFrame)
 
-    for algo, times in results.items():
-        assert len(times) == len(n_chains_list)
-        assert all(isinstance(t, float) for t in times)
+    expected_columns = {"number_of_chains", "algorithm", "time"}
+    assert expected_columns.issubset(df.columns)
+
+    assert set(df["number_of_chains"].unique()) == set(n_chains_list)
+
+    assert df["time"].dtype.kind in {"f"}
+
+
+def test_save_results_to_csv(tmp_path):
+    n_chains_list = [10]
+    df = run_scaling_benchmark(n_chains_list, n_repeats=1, random_seed=42)
+
+    csv_file = tmp_path / "results.csv"
+    save_results_to_csv(df, filename=csv_file)
+
+    df_loaded = pd.read_csv(csv_file)
+    assert not df_loaded.empty
+    assert set(df_loaded.columns) == {"number_of_chains", "algorithm", "time"}
