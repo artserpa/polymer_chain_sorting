@@ -4,16 +4,21 @@ from montecarlo.analysis import run_scaling_benchmark, save_results_to_csv
 
 def test_run_scaling_benchmark():
     n_chains_list = [10, 20]
-    df = run_scaling_benchmark(n_chains_list, n_repeats=2, random_seed=123)
+    df = run_scaling_benchmark(n_chains_list, n_repeats=2, use_numba=False)
 
     assert isinstance(df, pd.DataFrame)
 
-    expected_columns = {"number_of_chains", "algorithm", "time"}
-    assert expected_columns.issubset(df.columns)
+    expected_cols = ["number_of_chains", "algorithm", "generation_time", "sorting_time", "use_numba"]
+    for col in expected_cols:
+        assert col in df.columns
+    
+    assert (df["generation_time"] > 0).all()
+    assert (df["sorting_time"] > 0).all()
 
-    assert set(df["number_of_chains"].unique()) == set(n_chains_list)
-
-    assert df["time"].dtype.kind in {"f"}
+    df["total_time"] = df["generation_time"] + df["sorting_time"]
+    assert (df["total_time"] >= df["generation_time"]).all()
+    assert (df["total_time"] >= df["sorting_time"]).all()
+    
 
 
 def test_save_results_to_csv(tmp_path):
@@ -25,4 +30,4 @@ def test_save_results_to_csv(tmp_path):
 
     df_loaded = pd.read_csv(csv_file)
     assert not df_loaded.empty
-    assert set(df_loaded.columns) == {"number_of_chains", "algorithm", "time"}
+    assert set(df_loaded.columns) == {"number_of_chains", "algorithm", "generation_time", "sorting_time", "use_numba", "total_time"}

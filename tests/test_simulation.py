@@ -34,7 +34,3 @@ def test_generate_chain_numba():
     assert np.all(chain_lengths >= 1)
 
     print('Test for chain generation (Numba) passed!')
-
-if __name__ == "__main__":
-    test_generate_chain_small()
-    test_generate_chain_numba()
