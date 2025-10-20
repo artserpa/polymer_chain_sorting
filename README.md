@@ -1,4 +1,4 @@
-```markdown
+
 # Polymer Chain Monte Carlo Simulation
 
 This project simulates polymer chain formation using steady state Monte Carlo approach.
@@ -33,7 +33,6 @@ polymer_chain_sorting/
 │   └── test_visualization.py        
 └── results/                    # Output folder (CSV, PNG files)
 ```
-
 ### Installation
 Create a Python environment and install the dependecies:
 
@@ -54,21 +53,21 @@ python main.py
 This will:
 
 1. Benchmark sorting algorithms for polymer chains of sizes [100, 500, 1000].
-2. Save the benchmark results in 'results/benchmark_with_numba.csv''
+2. Save the benchmark results in `results/benchmark_with_numba.csv`
 3. Generate plots for:
-    - Sorting time ('results/sorting_time.png')
-    - Total time ('results/total_time.png')
+    - Sorting time (`results/sorting_time.png`)
+    - Total time (`results/total_time.png`)
 4. Generate polymer chains (10,000 chains by default) and save CSVs for distributions:
-    - 'results/distribution_WA.csv'
-    - 'results/distribution_WB.csv'
-    - 'results/distribution_WC.csv'
+    - `results/distribution_WA.csv`
+    - `results/distribution_WB.csv`
+    - `results/distribution_WC.csv`
 5. Plot monomer fraction distributions:
-    - 'results/distribution_WA.png'
-    - 'results/distribution_WBC.png'
+    - `results/distribution_WA.png`
+    - `results/distribution_WBC.png`
 
 ### Running Tests
 To run all tests:
 ```bash
 pytest
 ```
-All tests are located in the 'tests/' folder.
+All tests are located in the `tests/` folder.
