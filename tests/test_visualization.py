@@ -1,12 +1,30 @@
 import numpy as np
-import pytest
-from montecarlo.visualization import plot_w_distribution
+import matplotlib
+matplotlib.use("Agg")  # Para evitar abrir janelas de plot durante o teste
 import matplotlib.pyplot as plt
 
-def test_plot_w_distribution_runs():
-    freq_X = np.array([0.1, 0.2, 0.5, 0.8])
-    chain_lengths = np.array([5, 10, 2, 1])
+from montecarlo.visualization import plot_w_distribution
+from montecarlo.simulation import generate_chains
 
-    plot_w_distribution(freq_X, chain_lengths, smooth_window=5, poly_order=2, label="Test", color="blue")
+def test_generate_chains_shapes():
+    """Testa se generate_chains retorna arrays com o tamanho correto."""
+    n = 100
+    chain_lengths, freq_A, freq_B, freq_C = generate_chains(n, use_numba=False)
+    
+    assert len(chain_lengths) == n
+    assert len(freq_A) == n
+    assert len(freq_B) == n
+    assert len(freq_C) == n
 
+def test_plot_w_distribution_runs_without_error():
+    """Testa se a função plot_w_distribution roda sem erros."""
+    n = 50
+    chain_lengths = np.random.randint(1, 20, size=n)
+    freq_A = np.random.rand(n)
+
+    plt.figure()
+    try:
+        plot_w_distribution(freq_A, chain_lengths, smooth_window=5, poly_order=2)
+    except Exception as e:
+        assert False, f"plot_w_distribution levantou um erro: {e}"
     plt.close()
