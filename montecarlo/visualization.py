@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 
-def plot_w_distribution(freq_X, chain_lengths, n_bins=1000, smooth_window=51, poly_order=3, label=None, color=None):
+def plot_w_distribution(freq_X, chain_lengths, smooth_window=51, poly_order=3, label=None, color=None):
     """
     Plot wX distribution with points and smoothed line.
 
@@ -23,7 +23,7 @@ def plot_w_distribution(freq_X, chain_lengths, n_bins=1000, smooth_window=51, po
     color : str
         Color for points and line.
     """
-
+    n_bins = np.ceil(chain_lengths / 10)
     # Compute the w distribution
     bins = np.linspace(0, 1, n_bins + 1)
     bin_centers = (bins[:-1] + bins[1:]) / 2
