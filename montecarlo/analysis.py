@@ -1,49 +1,77 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import time
+import matplotlib.pyplot as plt
 from montecarlo.simulation import generate_chains
-from montecarlo.performance import benchmark_sorting_algorithms
+from montecarlo.performance import (
+    bubble_sort, bubble_sort_numba,
+    insertion_sort, insertion_sort_numba,
+    selection_sort, selection_sort_numba,
+    tim_sort
+)
+import time
 
-def run_scaling_benchmark(n_chains_list, n_repeats=3, random_seed=42, use_numba=False):
-    '''
-    Executes the benchmark with different sorting algorithms with increasing number of chains
+def run_scaling_benchmark(n_chains_list, n_repeats=3, use_numba=False, random_seed=42):
+    """
+    Runs benchmarks for increasing number of chains, including generation and sorting
+    of freq_A, freq_B, freq_C along with chain_lengths.
+    Supports both Python and Numba-accelerated sorting functions.
 
     Parameters
     ----------
-    n_chains_list : list[int]
-        List of number of chains.
+    n_chains_list : int
+        List of number of chians.
     n_repeats : int
-        Number of repetitions for each benchmark.
-    random_seed : int
-        Seed for reproducibility.
+        Number of repeats.
     use_numba : bool
-        Wether to use Numba-accelerated version of generated_chains.
+        Wether use Numba or not.
+    random_seed : int
+        Set the seed number for the simulation.
 
     Returns
     -------
-    pd.Dataframe
-        Results
-        number_of_chains | algorithm | generation_time | sorting_time | use_numba
-    '''
+    DataFrame
+        Information for the chain generation and sorting times.
+        number_of_chains | algorithm | use_numba | generation_time | sorting_time | repeat
+    """
     np.random.seed(random_seed)
     records = []
 
     for n in n_chains_list:
-        for _ in range(n_repeats):
-            start_gen = time.perf_counter()
-            chain_lengths, freq_A, _, _ = generate_chains(n, use_numba=use_numba)
-            generation_time = time.perf_counter() - start_gen
+        # --- Chain generation ---
+        start_gen = time.time()
+        chain_lengths, freq_A, freq_B, freq_C = generate_chains(n, use_numba=use_numba)
+        gen_time = time.time() - start_gen
 
-            benchmark = benchmark_sorting_algorithms(chain_lengths, freq_A)
-            for algo, sorting_time in benchmark.items():
+        # --- Sorting algorithms ---
+        sorting_algos = {
+            'bubble_sort': bubble_sort_numba if use_numba else bubble_sort,
+            'insertion_sort': insertion_sort_numba if use_numba else insertion_sort,
+            'selection_sort': selection_sort_numba if use_numba else selection_sort,
+            'tim_sort': tim_sort  # Tim sort does not support Numba
+        }
+
+        for algo_name, algo_func in sorting_algos.items():
+            for repeat in range(n_repeats):
+                D_copy = chain_lengths.copy()
+                F_A_copy = freq_A.copy()
+                F_B_copy = freq_B.copy()
+                F_C_copy = freq_C.copy()
+
+                start_sort = time.time()
+                algo_func(D_copy, F_A_copy)
+                algo_func(D_copy, F_B_copy)
+                algo_func(D_copy, F_C_copy)
+                sort_time = time.time() - start_sort
+
                 records.append({
-                    "number_of_chains": n,
-                    "algorithm": algo,
-                    "generation_time": generation_time,
-                    "sorting_time": sorting_time,
-                    "use_numba": use_numba
+                    'number_of_chains': n,
+                    'algorithm': algo_name,
+                    'use_numba': use_numba,
+                    'generation_time': gen_time,
+                    'sorting_time': sort_time,
+                    'repeat': repeat + 1
                 })
+
     return pd.DataFrame(records)
 
 def plot_benchmark_results(df_results, save_path=None, metric="sorting_time"):

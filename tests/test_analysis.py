@@ -8,7 +8,7 @@ def test_run_scaling_benchmark():
 
     assert isinstance(df, pd.DataFrame)
 
-    expected_cols = ["number_of_chains", "algorithm", "generation_time", "sorting_time", "use_numba"]
+    expected_cols = ["number_of_chains", "algorithm", "use_numba", "generation_time", "sorting_time", "repeat"]
     for col in expected_cols:
         assert col in df.columns
     
@@ -30,4 +30,4 @@ def test_save_results_to_csv(tmp_path):
 
     df_loaded = pd.read_csv(csv_file)
     assert not df_loaded.empty
-    assert set(df_loaded.columns) == {"number_of_chains", "algorithm", "generation_time", "sorting_time", "use_numba", "total_time"}
+    assert set(df_loaded.columns) == {"number_of_chains", "algorithm", "use_numba", "generation_time", "sorting_time", "repeat"}

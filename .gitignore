@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Benchmarks and graphics
+*.csv
+*.png
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
