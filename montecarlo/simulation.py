@@ -62,7 +62,7 @@ def _generate_chain_python(num_chains: int):
     P_CC = prob_propagate_C / (prob_propagate_C + prob_propagate_A / rate_CA + prob_propagate_B / rate_CB)
 
     # --- Initialization ---
-    np.random.seed(0)
+    #np.random.seed(0)
     chain_lengths = []
     freq_A = []
     freq_B = []
@@ -163,7 +163,7 @@ def _generate_chain_numba(num_chains):
     P_CB = (prob_propagate_B / rate_CB) / (prob_propagate_C + prob_propagate_A / rate_CA + prob_propagate_B / rate_CB)
     P_CC = prob_propagate_C / (prob_propagate_C + prob_propagate_A / rate_CA + prob_propagate_B / rate_CB)
 
-    np.random.seed(0)
+    #np.random.seed(0)
     for i in prange(num_chains):
         chain_length = 1
         count_A, count_B, count_C = 1, 0, 0
